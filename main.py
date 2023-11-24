@@ -78,13 +78,12 @@ class Record:
         if today > next_birthday:
             next_birthday = datetime(today.year + 1, self.birthday.month, self.birthday.day)
         days_left = (next_birthday - today).days
-        return days_left
+        return f"{days_left} days left until birthday {self.name}"
 
 
 class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
-
 
     def find(self, name):
         return self.data.get(name)
@@ -105,6 +104,10 @@ class AddressBook(UserDict):
                 result = ""
         if result:
             yield result
+
+    def __str__(self):
+        records_str = ',\n'.join(f"{name}: {record}" for name, record in self.data.items())
+        return f"{{\n{records_str}\n}}"
 
 
 class Birthday(Field):
@@ -138,7 +141,10 @@ knige = AddressBook()
 knige.add_record(n)
 knige.add_record(v)
 knige.add_record(b)
-#print(knige.iterator(2))
+# print(knige.iterator(2))
+# print(knige)
+#for items in knige.iterator(2):
+    #print(items)
+
 #print(knige)
-for items in knige.iterator(2):
-    print(items)
+print(n.days_to_birthday())
