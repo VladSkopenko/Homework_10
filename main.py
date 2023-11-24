@@ -4,10 +4,18 @@ from datetime import datetime
 
 class Field:
     def __init__(self, value):
-        self.value = value
+        self._value = value
 
     def __str__(self):
-        return str(self.value)
+        return str(self._value)
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        self._value = new_value
 
 
 class Name(Field):
@@ -20,11 +28,16 @@ class Phone(Field):
         self.validate()
 
     def validate(self):
-        if not isinstance(self.value, str) or len(self.value) != 10 or not self.value.isdigit():
+        if not isinstance(self._value, str) or len(self._value) != 10 or not self._value.isdigit():
             raise ValueError("Invalid phone number format")
 
-    def set_value(self, value):
-        self.value = value
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        self._value = new_value
         self.validate()
 
 
@@ -74,11 +87,12 @@ class Record:
         if not self.birthday:
             return None
         today = datetime.now()
-        next_birthday = datetime(today.year, self.birthday.month, self.birthday.day)
+        trans = datetime.strptime(str(self.birthday), "%Y-%m-%d")
+        next_birthday = datetime(today.year, trans.month, trans.day)
         if today > next_birthday:
-            next_birthday = datetime(today.year + 1, self.birthday.month, self.birthday.day)
+            next_birthday = datetime(today.year + 1, trans.month, trans.day)
         days_left = (next_birthday - today).days
-        return f"{days_left} days left until birthday {self.name}"
+        return f"{days_left} days left until birthday {self.name.value}"
 
 
 class AddressBook(UserDict):
@@ -114,37 +128,25 @@ class Birthday(Field):
     def __init__(self, value=None):
         super().__init__(value)
         self.validate_b()
-        self.day = int(value.split("-")[2] if value else None)
-        self.month = int(value.split("-")[1] if value else None)
-        self.year = int(value.split("-")[0] if value else None)
 
     def validate_b(self):
-        date_value = datetime.strptime(self.value, "%Y-%m-%d")
-        if not isinstance(date_value, datetime):
-            raise ValueError("Pls give Year-Month-Day")
+        try:
+            date_value = datetime.strptime(self._value, "%Y-%m-%d")
+        except ValueError:
+            raise ValueError("Invalid date format. Please provide Year-Month-Day.")
 
-    def set_value(self, value):
-        self.value = value
+        if not (1 <= date_value.month <= 12 and 1 <= date_value.day <= 31):
+            raise ValueError("Invalid date. Month should be between 1 and 12, day between 1 and 31.")
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        self._value = new_value
         self.validate_b()
 
+    def __str__(self):
+        return self._value
 
-a = Birthday("2000-01-28")
-w = Birthday("2001-11-19")
-e = Birthday("2000-02-10")
-n = Record("Vlad", birthday=e)
-v = Record("Luda", birthday=w)
-b = Record("Oleg", birthday=a)
-v.add_phone("0963710683")
-n.add_phone("1231234342")
-b.add_phone("0963610573")
-knige = AddressBook()
-knige.add_record(n)
-knige.add_record(v)
-knige.add_record(b)
-# print(knige.iterator(2))
-# print(knige)
-#for items in knige.iterator(2):
-    #print(items)
-
-#print(knige)
-print(n.days_to_birthday())
