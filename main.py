@@ -1,4 +1,5 @@
 from collections import UserDict
+from datetime import datetime
 
 
 class Field:
@@ -65,6 +66,16 @@ class Record:
             if num.value == a.value:
                 self.phones.remove(num)
 
+    def days_to_birthday(self):
+        if not self.birthday:
+            return None
+        today = datetime.now()
+        next_birthday = datetime(today.year, self.birthday.month, self.birthday.day)
+        if today > next_birthday:
+            next_birthday = datetime(today.year + 1, self.birthday.month, self.birthday.day)
+        days_left = (next_birthday - today).days
+        return days_left
+
 
 class AddressBook(UserDict):
     def add_record(self, record):
@@ -76,3 +87,10 @@ class AddressBook(UserDict):
     def delete(self, name):
         if name in self.data:
             del self.data[name]
+
+
+class Birthday:
+    def __init__(self, day, month, year):
+        self.day = day
+        self.month = month
+        self.year = year
