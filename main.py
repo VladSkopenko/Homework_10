@@ -36,7 +36,8 @@ class Record:
 
     def __str__(self):
         if self.birthday:
-            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value}"
+            return (f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)},"
+                    f" birthday: {self.birthday.value}")
         else:
             return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
@@ -64,9 +65,9 @@ class Record:
             raise ValueError
 
     def remove_phone(self, phone):
-        a = Phone(phone)
+        new_phone = Phone(phone)
         for num in self.phones:
-            if num.value == a.value:
+            if num.value == new_phone.value:
                 self.phones.remove(num)
 
     def days_to_birthday(self):
