@@ -35,7 +35,7 @@ class Record:
         self.birthday = birthday
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value}"
 
     def add_phone(self, phone_number):
         phone = Phone(phone_number)
@@ -70,7 +70,7 @@ class Record:
         if not self.birthday:
             return None
         today = datetime.now()
-        next_birthday = datetime(today.year, self.birthday.month, self.birthday.day)
+        next_birthday = self.birthday - today
         if today > next_birthday:
             next_birthday = datetime(today.year + 1, self.birthday.month, self.birthday.day)
         days_left = (next_birthday - today).days
@@ -89,8 +89,33 @@ class AddressBook(UserDict):
             del self.data[name]
 
 
-class Birthday:
-    def __init__(self, day, month, year):
-        self.day = day
-        self.month = month
-        self.year = year
+class Birthday(Field):
+    def __init__(self, value=None):
+        super().__init__(value)
+        self.validate_b()
+        self.day = value.split("-")[2] if value else None
+        self.month = value.split("-")[1] if value else None
+        self.year = value.split("-")[0] if value else None
+
+
+
+    def validate_b(self):
+        date_value = datetime.strptime(self.value, "%Y-%m-%d")
+        if not isinstance(date_value, datetime):
+            raise ValueError("Pls give Year-Month-Day")
+
+    def set_value(self, value):
+        self.value = value
+        self.validate_b()
+
+
+
+a = Birthday("2000-01-28")
+print(a)
+b = Record("Oleg", birthday=a)
+print(b)
+b.add_phone("0963610573")
+print(b)
+print(a.year)
+
+
