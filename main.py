@@ -35,7 +35,10 @@ class Record:
         self.birthday = birthday
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value}"
+        if self.birthday:
+            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: {self.birthday.value}"
+        else:
+            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
     def add_phone(self, phone_number):
         phone = Phone(phone_number)
@@ -70,7 +73,7 @@ class Record:
         if not self.birthday:
             return None
         today = datetime.now()
-        next_birthday = self.birthday - today
+        next_birthday = datetime(today.year, self.birthday.month, self.birthday.day)
         if today > next_birthday:
             next_birthday = datetime(today.year + 1, self.birthday.month, self.birthday.day)
         days_left = (next_birthday - today).days
@@ -93,11 +96,9 @@ class Birthday(Field):
     def __init__(self, value=None):
         super().__init__(value)
         self.validate_b()
-        self.day = value.split("-")[2] if value else None
-        self.month = value.split("-")[1] if value else None
-        self.year = value.split("-")[0] if value else None
-
-
+        self.day = int(value.split("-")[2] if value else None)
+        self.month = int(value.split("-")[1] if value else None)
+        self.year = int(value.split("-")[0] if value else None)
 
     def validate_b(self):
         date_value = datetime.strptime(self.value, "%Y-%m-%d")
@@ -109,7 +110,6 @@ class Birthday(Field):
         self.validate_b()
 
 
-
 a = Birthday("2000-01-28")
 print(a)
 b = Record("Oleg", birthday=a)
@@ -117,5 +117,4 @@ print(b)
 b.add_phone("0963610573")
 print(b)
 print(a.year)
-
-
+print(b.days_to_birthday())
