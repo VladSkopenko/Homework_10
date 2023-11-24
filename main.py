@@ -85,12 +85,26 @@ class AddressBook(UserDict):
     def add_record(self, record):
         self.data[record.name.value] = record
 
+
     def find(self, name):
         return self.data.get(name)
 
     def delete(self, name):
         if name in self.data:
             del self.data[name]
+
+    def iterator(self, item_number):
+        counter = 0
+        result = ""
+        for item, record in self.data.items():
+            result += f"{item}: {record}\n"
+            counter += 1
+            if counter >= item_number:
+                yield result
+                counter = 0
+                result = ""
+        if result:
+            yield result
 
 
 class Birthday(Field):
@@ -112,10 +126,19 @@ class Birthday(Field):
 
 
 a = Birthday("2000-01-28")
-print(a)
+w = Birthday("2001-11-19")
+e = Birthday("2000-02-10")
+n = Record("Vlad", birthday=e)
+v = Record("Luda", birthday=w)
 b = Record("Oleg", birthday=a)
-print(b)
+v.add_phone("0963710683")
+n.add_phone("1231234342")
 b.add_phone("0963610573")
-print(b)
-print(a.year)
-print(b.days_to_birthday())
+knige = AddressBook()
+knige.add_record(n)
+knige.add_record(v)
+knige.add_record(b)
+#print(knige.iterator(2))
+#print(knige)
+for items in knige.iterator(2):
+    print(items)
