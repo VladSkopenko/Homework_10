@@ -1,5 +1,6 @@
 from collections import UserDict
 from datetime import datetime
+import pickle
 
 
 class Field:
@@ -50,9 +51,9 @@ class Record:
     def __str__(self):
         if self.birthday:
             return (f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)},"
-                    f" birthday: {self.birthday.value}")
+                    f" birthday: {self.birthday}")
         else:
-            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+            return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}, birthday: None"
 
     def add_phone(self, phone_number):
         phone = Phone(phone_number)
@@ -119,6 +120,27 @@ class AddressBook(UserDict):
         if result:
             yield result
 
+    def save_disk(self):
+        with open("AddressBook.bin", "wb") as file:
+            pickle.dump(self, file)
+
+    def read_from_file(self):
+        with open("AddressBook.bin", "rb") as file:
+            return pickle.load(file)
+
+    def search(self, value):
+        result = []
+        value = value.lower()
+        for name, record in self.data.items():
+            if name.lower().startswith(value):
+                result.append(record)
+            else:
+                for phone in record.phones:
+                    if phone.value.startswith(value):
+                        result.append(record)
+
+        return result
+
     def __str__(self):
         records_str = ',\n'.join(f"{name}: {record}" for name, record in self.data.items())
         return f"{{\n{records_str}\n}}"
@@ -149,4 +171,28 @@ class Birthday(Field):
 
     def __str__(self):
         return self._value
+
+
+
+#Мої тести
+phone_1 = "0963610573"
+phone_2 = "0963610574"
+phone_3 = "0973716132"
+record = Record("luda", birthday="1980-05-16")
+record_1 = Record("Vlad", birthday="1994-03-28")
+record_2 = Record("Oleg", birthday="1976-01-23")
+record.add_phone(phone_1)
+record_1.add_phone(phone_2)
+record_2.add_phone(phone_3)
+ad = AddressBook()
+ad.add_record(record)
+ad.add_record(record_1)
+ad.add_record(record_2)
+while True:
+    fin = ad.search(input("Enter phone or Name pls:"))
+    for elem in fin:
+        if elem:
+            print(elem)
+        else:
+            print("unknown")
 
