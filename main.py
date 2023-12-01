@@ -174,25 +174,27 @@ class Birthday(Field):
 
 
 
-#Мої тести
-phone_1 = "0963610573"
-phone_2 = "0963610574"
-phone_3 = "0973716132"
-record = Record("luda", birthday="1980-05-16")
-record_1 = Record("Vlad", birthday="1994-03-28")
-record_2 = Record("Oleg", birthday="1976-01-23")
-record.add_phone(phone_1)
-record_1.add_phone(phone_2)
-record_2.add_phone(phone_3)
-ad = AddressBook()
-ad.add_record(record)
-ad.add_record(record_1)
-ad.add_record(record_2)
-while True:
-    fin = ad.search(input("Enter phone or Name pls:"))
-    for elem in fin:
-        if elem:
-            print(elem)
-        else:
-            print("unknown")
+# #Мої тести
+# phone_1 = "0963610573"
+# phone_2 = "0963610574"
+# phone_3 = "0973716132"
+# record = Record("luda", birthday="1980-05-16")
+# record_1 = Record("Vlad", birthday="1994-03-28")
+# record_2 = Record("Oleg", birthday="1976-01-23")
+# record.add_phone(phone_1)
+# record_1.add_phone(phone_2)
+# record_2.add_phone(phone_3)
+# ad = AddressBook()
+# ad.add_record(record)
+# ad.add_record(record_1)
+# ad.add_record(record_2)
+# ad.save_disk()
+# print(ad.read_from_file())
+# # while True:
+# #     fin = ad.search(input("Enter phone or Name pls:"))
+# #     for elem in fin:
+# #         if elem:
+# #             print(elem)
+# #         else:
+# #             print("unknown")
 
